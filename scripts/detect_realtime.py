@@ -20,9 +20,21 @@ from camera import VideoStream
 IMG_EXT = {".jpg", ".jpeg", ".png", ".bmp"}
 
 
-def load_model(weights, conf, device):
-    # Downloads the YOLOv5 code from GitHub the first time, then uses the local cache.
-    model = torch.hub.load("ultralytics/yolov5", "custom", path=weights, device=device)
+def find_local_yolov5(path):
+    """Return a cloned yolov5 folder if one exists (given path, ./yolov5 or ../yolov5)."""
+    for p in [path, "yolov5", os.path.join("..", "yolov5")]:
+        if p and os.path.isfile(os.path.join(p, "hubconf.py")):
+            return p
+    return None
+
+
+def load_model(weights, conf, device, yolov5_dir=""):
+    local = find_local_yolov5(yolov5_dir)
+    if local:
+        model = torch.hub.load(local, "custom", path=weights, device=device, source="local")
+    else:
+        # Downloads the YOLOv5 code from GitHub the first time, then uses the local cache.
+        model = torch.hub.load("ultralytics/yolov5", "custom", path=weights, device=device)
     model.conf = conf
     return model
 
@@ -49,11 +61,12 @@ def main():
     ap.add_argument("--img-size", type=int, default=640)
     ap.add_argument("--device", default="", help="'' auto, 'cpu', or '0' for GPU 0")
     ap.add_argument("--save-dir", default="runs/realtime")
+    ap.add_argument("--yolov5-dir", default="", help="path to a cloned yolov5 repo (default: ./yolov5 or ../yolov5)")
     ap.add_argument("--save-video", default="", help="also record the annotated video to this .mp4 path")
     ap.add_argument("--no-show", action="store_true", help="do not open a window (servers / recording only)")
     args = ap.parse_args()
 
-    model = load_model(args.weights, args.conf, args.device or None)
+    model = load_model(args.weights, args.conf, args.device or None, args.yolov5_dir)
     os.makedirs(args.save_dir, exist_ok=True)
 
     if os.path.splitext(args.source)[1].lower() in IMG_EXT:

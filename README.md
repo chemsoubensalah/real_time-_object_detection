@@ -14,6 +14,41 @@ notebooks/train_yolov5_colab.ipynb  التدريب والتقييم على Googl
 
 ---
 
+## ✅ النموذج جاهز: النتائج
+
+دُرّب النموذج **`models/person_yolov5n.pt`** (حجمه 3.7 MB) على **2000 صورة من COCO** فيها أشخاص (فئة واحدة `person`):
+
+| | |
+|---|---|
+| البيانات | 2000 صورة (Train 1600 / Val 200 / Test 200)، فيها 4051 شخصاً عليهم علامات |
+| الشبكة | YOLOv5n، انطلاقاً من أوزان مدرّبة مسبقاً (Transfer Learning) |
+| التدريب | 40 جولة (epoch)، حجم الصورة 416، على CPU فقط (4 أنوية): 65 دقيقة |
+
+**نتائج التقييم:**
+
+| المجموعة | Precision | Recall | mAP@0.5 | mAP@0.5:0.95 |
+|---|---|---|---|---|
+| Validation (أفضل جولة) | 0.909 | 0.815 | **0.899** | 0.591 |
+| **Test** (صور لم يرها النموذج) | 0.870 | 0.764 | **0.865** | 0.571 |
+
+**السرعة:** **37 FPS** على CPU بحجم 416، و 26 FPS بحجم 640، أي أنه يعمل في الوقت الحقيقي حتى بدون GPU.
+
+الملفات في مجلد `results/`:
+- `results.png`: منحنيات الـ Loss و Precision و Recall و mAP خلال التدريب
+- `test_confusion_matrix.png` و `test_PR_curve.png`: تقييم مجموعة الاختبار
+- `test_predictions.jpg`: أمثلة كشف على صور الاختبار
+- `demo_pedestrians.mp4` و `demo_frame_*.jpg`: تجربة على فيديو مشاة مع عرض FPS
+
+**نقطة ضعف معروفة:** الأشخاص **الصغار جداً أو البعيدين جداً** (مثل كاميرا مراقبة عالية) يُكتشفون أقل، لأن الأشخاص الأصغر من 2% من مساحة الصورة استُبعدوا من التدريب. أما الأشخاص القريبون من كاميرا الهاتف (الجزء العلوي أو الجسم كاملاً) فيُكتشفون جيداً. للأشخاص البعيدين استعمل `--img-size 640`.
+
+**التجربة مباشرة بكاميرا الهاتف:**
+```bash
+git clone https://github.com/ultralytics/yolov5        # مرة واحدة، داخل مجلد المشروع
+python scripts/detect_realtime.py --weights models/person_yolov5n.pt --source http://PHONE_IP:8080/video
+```
+
+---
+
 ## 0. التثبيت على الحاسوب
 ```bash
 git clone https://github.com/chemsoubensalah/real_time-_object_detection.git
@@ -82,7 +117,7 @@ python val.py --weights runs/train/person/weights/best.pt --data ../data/dataset
 المقاييس التي تكتبها في التقرير: **Precision** و**Recall** و**mAP@0.5** و**mAP@0.5:0.95**، مع منحنيات `results.png` و`confusion_matrix.png`.
 
 ## 7. الكشف المباشر بكاميرا الهاتف
-ضع `best.pt` في مجلد المشروع ثم:
+استعمل النموذج الجاهز `models/person_yolov5n.pt` أو نموذجك `best.pt`. من الأفضل نسخ مجلد `yolov5` داخل المشروع حتى يُحمَّل النموذج بدون إنترنت:
 ```bash
 python scripts/detect_realtime.py --weights best.pt --source http://192.168.1.5:8080/video
 python scripts/detect_realtime.py --weights best.pt --source video.mp4   # فيديو
@@ -90,6 +125,7 @@ python scripts/detect_realtime.py --weights best.pt --source photo.jpg   # صو�
 ```
 - تظهر المربعات ونسبة الثقة و**FPS** على الشاشة، ويُطبع متوسط FPS عند الخروج.
 - `s` يلتقط صورة شاشة (للتقرير)، و`q` للخروج.
+- `--save-video out.mp4` يسجّل الفيديو مع المربعات.
 - لزيادة السرعة: `--img-size 416` أو درّب `yolov5n.pt`.
 
 ## 8. مقارنة (اختياري)

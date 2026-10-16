@@ -4,3 +4,4 @@ yolov5/
 *.pt
 __pycache__/
 .ipynb_checkpoints/
+!models/*.pt
