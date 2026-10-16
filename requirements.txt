@@ -1,0 +1,12 @@
+opencv-python>=4.8
+torch>=2.0
+torchvision>=0.15
+# YOLOv5 dependencies (used by torch.hub when loading the model)
+ultralytics>=8.0
+pandas
+requests
+pillow
+pyyaml
+tqdm
+matplotlib
+seaborn
