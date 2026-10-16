@@ -49,6 +49,8 @@ def main():
     ap.add_argument("--img-size", type=int, default=640)
     ap.add_argument("--device", default="", help="'' auto, 'cpu', or '0' for GPU 0")
     ap.add_argument("--save-dir", default="runs/realtime")
+    ap.add_argument("--save-video", default="", help="also record the annotated video to this .mp4 path")
+    ap.add_argument("--no-show", action="store_true", help="do not open a window (servers / recording only)")
     args = ap.parse_args()
 
     model = load_model(args.weights, args.conf, args.device or None)
@@ -68,6 +70,7 @@ def main():
 
     fps, prev = 0.0, time.time()
     fps_log = []
+    writer = None
     try:
         while True:
             ok, frame = cap.read() if is_file else stream.read()
@@ -83,9 +86,17 @@ def main():
             inst = 1.0 / max(now - prev, 1e-6)
             fps = inst if fps == 0 else 0.9 * fps + 0.1 * inst  # smoothed so the number is readable
             prev = now
-            fps_log.append(fps)
+            fps_log.append(inst)
             info = f"FPS: {fps:.1f}   objects: {len(det)}"
             cv2.putText(frame, info, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
+            if args.save_video:
+                if writer is None:
+                    h, w = frame.shape[:2]
+                    rate = cap.get(cv2.CAP_PROP_FPS) if is_file else 0
+                    writer = cv2.VideoWriter(args.save_video, cv2.VideoWriter_fourcc(*"mp4v"), rate or 20, (w, h))
+                writer.write(frame)
+            if args.no_show:
+                continue
             cv2.imshow("YOLOv5 real-time (q quit, s screenshot)", frame)
 
             key = cv2.waitKey(1) & 0xFF
@@ -100,7 +111,10 @@ def main():
             cap.release()
         if stream:
             stream.release()
-        cv2.destroyAllWindows()
+        if writer:
+            writer.release()
+        if not args.no_show:
+            cv2.destroyAllWindows()
 
     if len(fps_log) > 10:
         avg = sum(fps_log[10:]) / len(fps_log[10:])  # skip warm-up frames
