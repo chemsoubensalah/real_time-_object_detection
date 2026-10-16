@@ -7,6 +7,7 @@ or from DroidCam:                               http://192.168.1.5:4747/video
 Frames are read in a background thread so we always process the newest frame.
 Network streams otherwise build up a buffer and the video lags behind reality.
 """
+import sys
 import threading
 import time
 
@@ -19,13 +20,25 @@ def parse_source(source):
     return int(source) if source.isdigit() else source
 
 
+def open_capture(source):
+    """Open a capture. On Windows, virtual webcams (iVCam, DroidCam client, OBS)
+    open more reliably with DirectShow than with the default MSMF backend."""
+    if isinstance(source, int) and sys.platform.startswith("win"):
+        cap = cv2.VideoCapture(source, cv2.CAP_DSHOW)
+        if cap.isOpened():
+            return cap
+    return cv2.VideoCapture(source)
+
+
 class VideoStream:
     def __init__(self, source):
         self.source = parse_source(source)
-        self.cap = cv2.VideoCapture(self.source)
+        self.cap = open_capture(self.source)
         if not self.cap.isOpened():
             raise RuntimeError(
                 f"Cannot open camera source: {source}\n"
+                "- iVCam: open the iVCam app on the PC first, then try --source 1 or 2\n"
+                "  (run scripts/list_cameras.py to find the right number).\n"
                 "- Phone and computer must be on the same Wi-Fi network.\n"
                 "- Check the URL shown in the phone app and open it in a browser first."
             )
