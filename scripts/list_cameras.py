@@ -6,9 +6,13 @@ Use it to find which number is the phone (iVCam / DroidCam client / OBS virtual 
 Then open the saved camera_N.jpg images and use that N:
     python scripts/detect_realtime.py --weights models/person_yolov5n.pt --source N
 """
-import cv2
+import os
 
-from camera import open_capture
+os.environ.setdefault("OPENCV_LOG_LEVEL", "OFF")  # hide warnings for missing camera numbers
+
+import cv2  # noqa: E402
+
+from camera import open_capture  # noqa: E402
 
 
 def main(max_index=6):
