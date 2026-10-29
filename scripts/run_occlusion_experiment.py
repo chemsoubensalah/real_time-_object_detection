@@ -57,10 +57,15 @@ def evaluate(weights, yolov5_dir, name):
 
 
 def finetune(base, data_yaml, name, epochs, yolov5_dir):
-    run([sys.executable, "train.py", "--img", "416", "--batch", "32", "--epochs", str(epochs), "--data", data_yaml,
-         "--weights", base, "--device", "cpu", "--workers", "4", "--name", name, "--exist-ok", "--seed", "0"],
-        yolov5_dir)
-    return os.path.join(yolov5_dir, "runs", "train", name, "weights", "best.pt")
+    run_dir = os.path.join(yolov5_dir, "runs", "train", name, "weights")
+    last = os.path.join(run_dir, "last.pt")
+    if os.path.exists(last):  # an earlier run was interrupted: continue it instead of starting over
+        run([sys.executable, "train.py", "--resume", last], yolov5_dir)
+    else:
+        run([sys.executable, "train.py", "--img", "416", "--batch", "32", "--epochs", str(epochs), "--data", data_yaml,
+             "--weights", base, "--device", "cpu", "--workers", "4", "--name", name, "--exist-ok", "--seed", "0"],
+            yolov5_dir)
+    return os.path.join(run_dir, "best.pt")
 
 
 def main():
