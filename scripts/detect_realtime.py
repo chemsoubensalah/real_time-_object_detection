@@ -1,4 +1,4 @@
-"""Real-time detection on the phone camera with a trained YOLOv5 .pt model.
+"""Real-time detection on the phone camera with a trained .pt model (YOLOv5 or ultralytics YOLO11).
 
 Usage:
     python scripts/detect_realtime.py --weights best.pt --source http://192.168.1.5:8080/video
@@ -11,6 +11,7 @@ Shows boxes, confidence and FPS. Press q to quit, s to save a screenshot.
 import argparse
 import os
 import time
+import zipfile
 
 import cv2
 import torch
@@ -28,7 +29,41 @@ def find_local_yolov5(path):
     return None
 
 
+class YoloV5Model:
+    """YOLOv5 checkpoint loaded through the YOLOv5 repo (torch.hub)."""
+
+    def __init__(self, model):
+        self.model, self.names = model, model.names
+
+    def predict(self, bgr, size):
+        rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)  # YOLOv5 expects RGB
+        return self.model(rgb, size=size).xyxy[0].cpu()  # rows: x1, y1, x2, y2, conf, class
+
+
+class UltralyticsModel:
+    """Checkpoint trained with the `ultralytics` package (YOLOv8 / YOLO11)."""
+
+    def __init__(self, weights, conf, device):
+        from ultralytics import YOLO
+        self.model, self.conf, self.device = YOLO(weights), conf, device
+        self.names = self.model.names
+
+    def predict(self, bgr, size):
+        r = self.model.predict(bgr, imgsz=size, conf=self.conf, device=self.device, verbose=False)[0]  # BGR is fine here
+        b = r.boxes
+        return torch.cat([b.xyxy, b.conf[:, None], b.cls[:, None]], 1).cpu()
+
+
+def is_ultralytics_checkpoint(weights):
+    """True if the .pt file was saved by the ultralytics package (its pickle names ultralytics classes)."""
+    with zipfile.ZipFile(weights) as z:
+        pkl = next(n for n in z.namelist() if n.endswith("data.pkl"))
+        return b"ultralytics" in z.read(pkl)
+
+
 def load_model(weights, conf, device, yolov5_dir=""):
+    if is_ultralytics_checkpoint(weights):
+        return UltralyticsModel(weights, conf, device)
     local = find_local_yolov5(yolov5_dir)
     if local:
         model = torch.hub.load(local, "custom", path=weights, device=device, source="local")
@@ -36,10 +71,12 @@ def load_model(weights, conf, device, yolov5_dir=""):
         # Downloads the YOLOv5 code from GitHub the first time, then uses the local cache.
         model = torch.hub.load("ultralytics/yolov5", "custom", path=weights, device=device)
     model.conf = conf
-    return model
+    return YoloV5Model(model)
 
 
-COLORS = [(0, 255, 0), (255, 128, 0), (255, 0, 255), (0, 200, 255), (0, 0, 255), (255, 255, 0)]  # BGR, one per class
+# BGR, one distinct color per class (12 classes in the v2 model)
+COLORS = [(0, 255, 0), (255, 128, 0), (255, 0, 255), (0, 200, 255), (0, 0, 255), (255, 255, 0),
+          (0, 128, 255), (128, 0, 255), (200, 200, 0), (0, 150, 80), (150, 80, 0), (0, 0, 180)]
 
 
 def draw(frame, det, names):
@@ -53,8 +90,7 @@ def draw(frame, det, names):
 
 
 def detect(model, frame, img_size):
-    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    return model(rgb, size=img_size).xyxy[0].cpu()
+    return model.predict(frame, img_size)
 
 
 def main():
