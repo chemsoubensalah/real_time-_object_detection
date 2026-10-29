@@ -39,12 +39,16 @@ def load_model(weights, conf, device, yolov5_dir=""):
     return model
 
 
+COLORS = [(0, 255, 0), (255, 128, 0), (255, 0, 255), (0, 200, 255), (0, 0, 255), (255, 255, 0)]  # BGR, one per class
+
+
 def draw(frame, det, names):
     for *xyxy, conf, cls in det.tolist():
         x1, y1, x2, y2 = map(int, xyxy)
+        color = COLORS[int(cls) % len(COLORS)]
         label = f"{names[int(cls)]} {conf:.2f}"
-        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        cv2.putText(frame, label, (x1, max(y1 - 8, 15)), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+        cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
+        cv2.putText(frame, label, (x1, max(y1 - 8, 15)), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
     return frame
 
 
