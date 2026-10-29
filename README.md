@@ -49,6 +49,36 @@ python scripts/detect_realtime.py --weights models/person_yolov5n.pt --source ht
 
 ---
 
+## المرحلة الثانية: عدة فئات، إخفاء جزئي، ومقارنة خوارزميات
+
+شرح كامل بالعربية مع الكود: `docs/project_phase2_ar.pdf`
+
+| الملف | الوصف |
+|---|---|
+| `models/multi_yolov5n.pt` | نموذج واحد لـ 5 فئات: person, car, cat, dog, drone |
+| `models/multi_occ_yolov5n.pt` | نفسه، مضبوط 10 جولات مع صور مخفية جزئياً |
+
+```bash
+python scripts/detect_realtime.py --weights models/multi_yolov5n.pt --source 1
+```
+
+**النتائج (مجموعة الاختبار، 310 صور):** mAP@0.5 = 0.651 (person 0.629، car 0.503، cat 0.768، dog 0.601، drone 0.755).
+
+**الإخفاء الجزئي (mAP@0.5):** الأساسي 0.651 / 0.542 / 0.311 / 0.135 عند إخفاء 0 / 20 / 40 / 60%. التدريب على صور مخفية أعطى 0.623 / 0.530 / 0.317 / 0.145. الفروق عن المجموعة الضابطة نحو 0.02 فقط وبتجربة واحدة، فهي غير حاسمة.
+
+**مقارنة الخوارزميات:** `results/compare/compare.json` (YOLOv5، SSD، RetinaNet، FCOS، Faster R-CNN، DETR على COCO val2017).
+
+| السكربت | الوظيفة |
+|---|---|
+| `download_coco_multi.py` | صور COCO لعدة فئات |
+| `add_yolo_dataset.py` | إضافة مجموعة بيانات أخرى كفئة جديدة (المسيّرات) |
+| `pseudo_label.py` | ملء العلامات الناقصة بنموذج جاهز |
+| `make_occlusion.py` | صناعة صور مخفية جزئياً، العلامة = الجزء الظاهر |
+| `run_occlusion_experiment.py` | تجربة الإخفاء كاملة |
+| `compare_detectors.py` | مقارنة الخوارزميات بنفس المقياس |
+
+---
+
 ## 0. التثبيت على الحاسوب
 ```bash
 git clone https://github.com/chemsoubensalah/real_time-_object_detection.git

@@ -1,0 +1,128 @@
+[
+ {
+  "model": "ours-multi",
+  "mAP50": 0.612,
+  "mAP50_95": 0.354,
+  "AP_small": 0.101,
+  "per_class_mAP50_95": {
+   "person": 0.289,
+   "car": 0.259,
+   "cat": 0.429,
+   "dog": 0.44
+  },
+  "ms_per_image": 37.8,
+  "fps": 26.5
+ },
+ {
+  "model": "yolov5n",
+  "mAP50": 0.672,
+  "mAP50_95": 0.422,
+  "AP_small": 0.071,
+  "per_class_mAP50_95": {
+   "person": 0.398,
+   "car": 0.352,
+   "cat": 0.451,
+   "dog": 0.487
+  },
+  "ms_per_image": 63.7,
+  "fps": 15.7
+ },
+ {
+  "model": "yolov5s",
+  "mAP50": 0.764,
+  "mAP50_95": 0.509,
+  "AP_small": 0.354,
+  "per_class_mAP50_95": {
+   "person": 0.474,
+   "car": 0.451,
+   "cat": 0.534,
+   "dog": 0.578
+  },
+  "ms_per_image": 118.4,
+  "fps": 8.4
+ },
+ {
+  "model": "ssdlite",
+  "mAP50": 0.58,
+  "mAP50_95": 0.374,
+  "AP_small": 0.002,
+  "per_class_mAP50_95": {
+   "person": 0.275,
+   "car": 0.184,
+   "cat": 0.536,
+   "dog": 0.503
+  },
+  "ms_per_image": 77.2,
+  "fps": 12.9
+ },
+ {
+  "model": "retinanet",
+  "mAP50": 0.833,
+  "mAP50_95": 0.599,
+  "AP_small": 0.35,
+  "per_class_mAP50_95": {
+   "person": 0.505,
+   "car": 0.491,
+   "cat": 0.712,
+   "dog": 0.69
+  },
+  "ms_per_image": 1849.8,
+  "fps": 0.5
+ },
+ {
+  "model": "fcos",
+  "mAP50": 0.821,
+  "mAP50_95": 0.587,
+  "AP_small": 0.337,
+  "per_class_mAP50_95": {
+   "person": 0.504,
+   "car": 0.49,
+   "cat": 0.684,
+   "dog": 0.671
+  },
+  "ms_per_image": 1871.7,
+  "fps": 0.5
+ },
+ {
+  "model": "frcnn-mobile",
+  "mAP50": 0.774,
+  "mAP50_95": 0.515,
+  "AP_small": 0.221,
+  "per_class_mAP50_95": {
+   "person": 0.418,
+   "car": 0.36,
+   "cat": 0.642,
+   "dog": 0.642
+  },
+  "ms_per_image": 496.2,
+  "fps": 2.0
+ },
+ {
+  "model": "frcnn-r50",
+  "mAP50": 0.883,
+  "mAP50_95": 0.647,
+  "AP_small": 0.469,
+  "per_class_mAP50_95": {
+   "person": 0.575,
+   "car": 0.566,
+   "cat": 0.736,
+   "dog": 0.712
+  },
+  "ms_per_image": 3150.6,
+  "fps": 0.3
+ },
+ {
+  "model": "detr",
+  "mAP50": 0.809,
+  "mAP50_95": 0.606,
+  "AP_small": 0.278,
+  "per_class_mAP50_95": {
+   "person": 0.507,
+   "car": 0.488,
+   "cat": 0.749,
+   "dog": 0.681
+  },
+  "ms_per_image": 1043.4,
+  "fps": 1.0
+ }
+]
