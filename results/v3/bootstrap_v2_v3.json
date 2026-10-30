@@ -1,0 +1,27 @@
+{
+ "a": "models/v2_yolo11n_12cls.pt",
+ "b": "models/v3_yolo11n_12cls.pt",
+ "resamples": 100,
+ "coco": {
+  "images": 440,
+  "AP50_a": 0.645,
+  "AP50_b": 0.666,
+  "diff_b_minus_a": 0.02,
+  "ci95": [
+   -0.001,
+   0.038
+  ],
+  "contains_zero": true
+ },
+ "drone": {
+  "images": 300,
+  "AP50_a": 0.812,
+  "AP50_b": 0.817,
+  "diff_b_minus_a": 0.004,
+  "ci95": [
+   -0.017,
+   0.03
+  ],
+  "contains_zero": true
+ }
+}

@@ -92,7 +92,10 @@ def main():
     ap.add_argument("--out", default="results/v2/evaluation.json")
     ap.add_argument("--limit", type=int, default=0, help="only the first N images of each set (quick test)")
     ap.add_argument("--threads", type=int, default=4)
+    ap.add_argument("--coco-dir", default=TEST_SETS["coco"], help="folder with images/ and labels/ (COCO classes)")
+    ap.add_argument("--drone-dir", default=TEST_SETS["drone"], help="folder with images/ and labels/ (drone label only)")
     args = ap.parse_args()
+    TEST_SETS["coco"], TEST_SETS["drone"] = args.coco_dir, args.drone_dir
     torch.set_num_threads(args.threads)
     images_by_set = {s: sorted(glob.glob(os.path.join(d, "images", "*"))) for s, d in TEST_SETS.items()}
     os.makedirs(os.path.dirname(args.out), exist_ok=True)

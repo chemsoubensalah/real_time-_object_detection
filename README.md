@@ -49,6 +49,17 @@ python scripts/detect_realtime.py --weights models/person_yolov5n.pt --source ht
 
 ---
 
+## محاولتان لتحسين النموذج (النتيجة: لا تحسّن مؤكد)
+
+التقرير: `docs/project_phase4_ar.pdf`
+
+- **النموذج `models/v3_yolo11n_12cls.pt`**: بداية المسيّرة من صف kite، ومعدل تعلم أقل (16 جولة). على الاختبار: COCO (11 فئة) AP@0.5 = 0.666، والمسيّرة = 0.817. **لا يمكن التمييز بينه وبين v2** (بوتستراب: فاصل الثقة 95% يحوي الصفر).
+- **دمج الأوزان** `interpolate_models.py` (من WiSE-FT): يعطي مقايضة سلسة بين COCO والمسيّرة ولا مكسباً مجانياً. مكسب ظهر على مجموعة الضبط كان ضجيجاً واختفى على الاختبار.
+- **تصحيح:** مكتبة ultralytics تنسخ صفوف الفئات المتطابقة بالاسم تلقائياً (سطر "Remapped 11/12 cls head rows"). فهذا لا يميّز `head_surgery.py` عن التدريب العادي إلا في صف المسيّرة (kite) وفي إمكانية القياس قبل التدريب.
+- السكربتات: `head_surgery.py`، `interpolate_models.py`، `make_tuning_set.py`، `bootstrap_compare.py`. النتائج: `results/v3/`.
+
+---
+
 ## النموذج الموحّد الثاني: 12 فئة (YOLO11n)
 
 شرح كامل بالعربية مع النتائج والتحفظات: `docs/project_phase3_ar.pdf`

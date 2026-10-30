@@ -1,0 +1,27 @@
+{
+ "a": "/home/user/runs_v3/mix/alpha_0.8.pt",
+ "b": "models/v3_yolo11n_12cls.pt",
+ "resamples": 100,
+ "coco": {
+  "images": 440,
+  "AP50_a": 0.68,
+  "AP50_b": 0.666,
+  "diff_b_minus_a": -0.013,
+  "ci95": [
+   -0.022,
+   -0.005
+  ],
+  "contains_zero": false
+ },
+ "drone": {
+  "images": 300,
+  "AP50_a": 0.765,
+  "AP50_b": 0.817,
+  "diff_b_minus_a": 0.052,
+  "ci95": [
+   0.032,
+   0.077
+  ],
+  "contains_zero": false
+ }
+}

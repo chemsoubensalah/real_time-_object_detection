@@ -1,13 +1,15 @@
-"""Build a smaller-class-count model from a pretrained one by keeping only some class rows.
+"""Build a model with a different set of classes from a pretrained one by keeping only some class rows.
 
 A YOLO11 detection head ends with one 1x1 convolution per scale that has one output row per class.
-Changing the number of classes normally re-creates these layers with RANDOM numbers, throwing away
-what the pretrained model learned about e.g. "person" or "car". Here we instead COPY the rows of the
-classes we want, in our own order. A new class can start from a similar pretrained class:
-"drone=kite" means the drone row starts as a copy of the kite row.
+NOTE: when you train with a different class list, ultralytics already copies the rows of classes whose NAMES
+match (its log says "Remapped 11/12 cls head rows from pretrained weights by class name"), so for those classes
+this script changes nothing compared with a normal training run. What it adds:
+  * a NEW class can start from a similar pretrained class: "drone=kite" copies the kite row to the drone row
+    (a normal run starts the 12th class from random numbers);
+  * the result can be evaluated BEFORE any training, which gives a zero-shot baseline.
 
-Everything else (backbone, neck, box branch, shared class features) is untouched, so the result
-behaves exactly like the pretrained model on the kept classes, before any fine-tuning.
+Backbone, neck, box branch and shared class features are untouched, so the result behaves exactly like the
+pretrained model on the kept classes.
 
 Usage:
     python scripts/head_surgery.py --src yolo11n.pt --out models/yolo11n_12cls_init.pt \
