@@ -1,0 +1,51 @@
+{
+ "weights": "models/v3_yolo11n_12cls.pt",
+ "folder": "data/v2_test_drone",
+ "conf": 0.25,
+ "results": [
+  {
+   "mode": "plain:512",
+   "recall_by_size": {
+    "tiny <16": {
+     "found": 16,
+     "total": 23,
+     "recall": 0.696
+    },
+    "small 16-32": {
+     "found": 43,
+     "total": 48,
+     "recall": 0.896
+    },
+    "medium 32-96": {
+     "found": 75,
+     "total": 105,
+     "recall": 0.714
+    },
+    "large >=96": {
+     "found": 99,
+     "total": 130,
+     "recall": 0.762
+    }
+   },
+   "recall_by_light": {
+    "dark (<70)": {
+     "found": 17,
+     "total": 27,
+     "recall": 0.63
+    },
+    "normal (>=70)": {
+     "found": 216,
+     "total": 279,
+     "recall": 0.774
+    }
+   },
+   "recall_all": 0.761,
+   "false_boxes_per_image": 0.107,
+   "AP50_all": 0.817,
+   "AP50_small(<32px)": 0.853,
+   "AP50_medium": 0.795,
+   "AP50_large": 0.819,
+   "ms_per_image": 54.4
+  }
+ ]
+}

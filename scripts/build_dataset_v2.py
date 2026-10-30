@@ -75,18 +75,19 @@ def cmd_drones(args):
         with zipfile.ZipFile(z) as zf:
             zf.extractall(os.path.join(work, sub))
     src_img, src_lbl = os.path.join(work, "images"), os.path.join(work, "labels")
-    add_yolo_dataset_main(src_img, src_lbl, args.num, "drone", args.seed)
+    add_yolo_dataset_main(src_img, src_lbl, args.num, args.prefix, args.seed, args.skip)
     shutil.rmtree(work)  # free the disk: only the sampled images are kept
 
 
-def add_yolo_dataset_main(src_images, src_labels, num, prefix, seed):
-    """Copy `num` valid drone images (class rewritten to DRONE_ID) into RAW."""
+def add_yolo_dataset_main(src_images, src_labels, num, prefix, seed, skip=0):
+    """Copy `num` valid drone images (class rewritten to DRONE_ID) into RAW,
+    after skipping the first `skip` valid ones of the same shuffled order (already used by an earlier run)."""
     img_out, lbl_out = os.path.join(RAW, "images"), os.path.join(RAW, "labels")
     os.makedirs(img_out, exist_ok=True)
     os.makedirs(lbl_out, exist_ok=True)
     names = sorted(n for n in os.listdir(src_images) if os.path.splitext(n)[1].lower() in add_yolo_dataset.IMG_EXT)
     random.Random(seed).shuffle(names)
-    added = 0
+    added = skipped = 0
     for name in names:
         if added >= num:
             break
@@ -94,6 +95,9 @@ def add_yolo_dataset_main(src_images, src_labels, num, prefix, seed):
         lbl = os.path.join(src_labels, stem + ".txt")
         lines = add_yolo_dataset.read_label(lbl, DRONE_ID) if os.path.exists(lbl) else None
         if not lines:
+            continue
+        if skipped < skip:
+            skipped += 1
             continue
         new_stem = f"{prefix}_{added:05d}"
         shutil.copy2(os.path.join(src_images, name), os.path.join(img_out, new_stem + ext.lower()))
@@ -120,7 +124,7 @@ def cmd_pseudo(args):
     name_to_id = {n: i for i, n in model.names.items()}
     teacher_ids = [name_to_id[c] for c in PSEUDO_CLASSES]
     ours = {name_to_id[c]: CLASSES.index(c) for c in PSEUDO_CLASSES}
-    paths = sorted(glob.glob(os.path.join(RAW, "images", "drone_*")))
+    paths = sorted(glob.glob(os.path.join(RAW, "images", args.pattern)))
     added = touched = 0
     def predictions():
         for i in range(0, len(paths), 8):  # chunks of 8: a list source would otherwise become one giant batch
@@ -210,7 +214,9 @@ def cmd_tests(args):
 
 
 def main():
+    global RAW
     ap = argparse.ArgumentParser()
+    ap.add_argument("--raw", default=RAW, help="raw folder (images/ + labels/) used by coco, drones, pseudo and split")
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("coco")
     p.add_argument("--per-class", type=int, default=400)
@@ -225,10 +231,13 @@ def main():
     p.add_argument("--num", type=int, default=900)
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--work", default="data/_drone_extract")
+    p.add_argument("--prefix", default="drone", help="file name prefix of the copied images")
+    p.add_argument("--skip", type=int, default=0, help="skip the first N valid images (used by an earlier run)")
     p.set_defaults(fn=cmd_drones)
     p = sub.add_parser("pseudo")
     p.add_argument("--teacher", default="yolo11m.pt")
     p.add_argument("--conf", type=float, default=0.5)
+    p.add_argument("--pattern", default="drone_*", help="which images of the raw folder get pseudo-labels")
     p.set_defaults(fn=cmd_pseudo)
     p = sub.add_parser("split")
     p.add_argument("--val", type=float, default=0.08)
@@ -244,6 +253,7 @@ def main():
     p.add_argument("--num-drone", type=int, default=300)
     p.set_defaults(fn=cmd_tests)
     args = ap.parse_args()
+    RAW = args.raw
     args.fn(args)
 
 

@@ -1,0 +1,227 @@
+{
+ "weights": "models/v3_yolo11n_12cls.pt",
+ "folder": "data/v2_tune_drone",
+ "conf": 0.25,
+ "results": [
+  {
+   "mode": "plain:512",
+   "recall_by_size": {
+    "tiny <16": {
+     "found": 8,
+     "total": 10,
+     "recall": 0.8
+    },
+    "small 16-32": {
+     "found": 20,
+     "total": 25,
+     "recall": 0.8
+    },
+    "medium 32-96": {
+     "found": 44,
+     "total": 55,
+     "recall": 0.8
+    },
+    "large >=96": {
+     "found": 44,
+     "total": 61,
+     "recall": 0.721
+    }
+   },
+   "recall_by_light": {
+    "dark (<70)": {
+     "found": 8,
+     "total": 15,
+     "recall": 0.533
+    },
+    "normal (>=70)": {
+     "found": 108,
+     "total": 136,
+     "recall": 0.794
+    }
+   },
+   "recall_all": 0.768,
+   "false_boxes_per_image": 0.14,
+   "AP50_all": 0.816,
+   "AP50_small(<32px)": 0.814,
+   "AP50_medium": 0.834,
+   "AP50_large": 0.793,
+   "ms_per_image": 60.8
+  },
+  {
+   "mode": "plain:640",
+   "recall_by_size": {
+    "tiny <16": {
+     "found": 8,
+     "total": 10,
+     "recall": 0.8
+    },
+    "small 16-32": {
+     "found": 21,
+     "total": 25,
+     "recall": 0.84
+    },
+    "medium 32-96": {
+     "found": 45,
+     "total": 55,
+     "recall": 0.818
+    },
+    "large >=96": {
+     "found": 43,
+     "total": 61,
+     "recall": 0.705
+    }
+   },
+   "recall_by_light": {
+    "dark (<70)": {
+     "found": 9,
+     "total": 15,
+     "recall": 0.6
+    },
+    "normal (>=70)": {
+     "found": 108,
+     "total": 136,
+     "recall": 0.794
+    }
+   },
+   "recall_all": 0.775,
+   "false_boxes_per_image": 0.153,
+   "AP50_all": 0.832,
+   "AP50_small(<32px)": 0.896,
+   "AP50_medium": 0.865,
+   "AP50_large": 0.769,
+   "ms_per_image": 77.5
+  },
+  {
+   "mode": "plain:800",
+   "recall_by_size": {
+    "tiny <16": {
+     "found": 9,
+     "total": 10,
+     "recall": 0.9
+    },
+    "small 16-32": {
+     "found": 22,
+     "total": 25,
+     "recall": 0.88
+    },
+    "medium 32-96": {
+     "found": 44,
+     "total": 55,
+     "recall": 0.8
+    },
+    "large >=96": {
+     "found": 46,
+     "total": 61,
+     "recall": 0.754
+    }
+   },
+   "recall_by_light": {
+    "dark (<70)": {
+     "found": 10,
+     "total": 15,
+     "recall": 0.667
+    },
+    "normal (>=70)": {
+     "found": 111,
+     "total": 136,
+     "recall": 0.816
+    }
+   },
+   "recall_all": 0.801,
+   "false_boxes_per_image": 0.193,
+   "AP50_all": 0.822,
+   "AP50_small(<32px)": 0.902,
+   "AP50_medium": 0.829,
+   "AP50_large": 0.765,
+   "ms_per_image": 125.2
+  },
+  {
+   "mode": "tiles2:512",
+   "recall_by_size": {
+    "tiny <16": {
+     "found": 9,
+     "total": 10,
+     "recall": 0.9
+    },
+    "small 16-32": {
+     "found": 21,
+     "total": 25,
+     "recall": 0.84
+    },
+    "medium 32-96": {
+     "found": 47,
+     "total": 55,
+     "recall": 0.855
+    },
+    "large >=96": {
+     "found": 46,
+     "total": 61,
+     "recall": 0.754
+    }
+   },
+   "recall_by_light": {
+    "dark (<70)": {
+     "found": 10,
+     "total": 15,
+     "recall": 0.667
+    },
+    "normal (>=70)": {
+     "found": 113,
+     "total": 136,
+     "recall": 0.831
+    }
+   },
+   "recall_all": 0.815,
+   "false_boxes_per_image": 0.993,
+   "AP50_all": 0.676,
+   "AP50_small(<32px)": 0.831,
+   "AP50_medium": 0.807,
+   "AP50_large": 0.501,
+   "ms_per_image": 259.8
+  },
+  {
+   "mode": "tiles3:512",
+   "recall_by_size": {
+    "tiny <16": {
+     "found": 10,
+     "total": 10,
+     "recall": 1.0
+    },
+    "small 16-32": {
+     "found": 24,
+     "total": 25,
+     "recall": 0.96
+    },
+    "medium 32-96": {
+     "found": 45,
+     "total": 55,
+     "recall": 0.818
+    },
+    "large >=96": {
+     "found": 44,
+     "total": 61,
+     "recall": 0.721
+    }
+   },
+   "recall_by_light": {
+    "dark (<70)": {
+     "found": 10,
+     "total": 15,
+     "recall": 0.667
+    },
+    "normal (>=70)": {
+     "found": 113,
+     "total": 136,
+     "recall": 0.831
+    }
+   },
+   "recall_all": 0.815,
+   "false_boxes_per_image": 1.513,
+   "AP50_all": 0.709,
+   "AP50_small(<32px)": 0.872,
+   "AP50_medium": 0.782,
+   "AP50_large": 0.579,
+   "ms_per_image": 531.0
+  }
+ ]
+}
